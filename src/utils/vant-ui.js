@@ -1,9 +1,11 @@
 import Vue from 'vue'
 
-import { Button, Switch, Rate, Tabbar, TabbarItem } from 'vant'
+import { Toast, Tabbar, TabbarItem, NavBar } from 'vant'
 // Vue.use(Button)
 // Vue.use(Switch)
 // Vue.use(Rate)
 
+Vue.use(NavBar);
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
+Vue.use(Toast);
