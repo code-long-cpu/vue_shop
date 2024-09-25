@@ -1,18 +1,16 @@
 import axios from 'axios'
-import { Toast } from 'vant'
 
 // ①创建axios实例对象。Axios是类，有构造函数功能，所以能建多个不同的实例对象。以前是直接axios发请求，现在先创建实例（对象），再通过实例对象发请求。
-const instance = axios.create({
-  baseURL: 'http://smart-shop.itheima.net/index.php?s=/api',
+const DengLu = axios.create({
+  baseURL: 'http://localhost:3000',
   timeout: 5000,
-  headers: { platform: "H5" },
 });
 
 // ②自定义配置实例对象，xielong.name='龙' ；xielong.qingqiu 
 // 配置请求拦截器， 响应拦截器
 
 // 添加请求拦截器
-instance.interceptors.request.use(function (config) {
+DengLu.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
   return config;
 }, function (error) {
@@ -21,21 +19,23 @@ instance.interceptors.request.use(function (config) {
 });
 
 // 添加响应拦截器
-instance.interceptors.response.use(function (response) {
+DengLu.interceptors.response.use(function (response) {
   // 2xx 范围内的状态码都会触发该函数。
   // 对响应数据做点什么
   const res = response.data;
 
-  // 检查异常请求的数据是错误的，状态码非200，状态码500就是错误请求
-  // console.log(res);
-  if (res.status !== 200) {
-    // 弹出给提示toast，message就是后台给的信息”很抱歉，图形验证码不正确“
-    Toast(res.message)
-    //在控制台抛出红色异常。中断程序，下面的短信验证码倒计时不执行
-    return Promise.reject(res.message);
-  }
+  // // 检查请求异常
+  // // console.log(res);
+  // if (res.status !== 200) {
+  //   // 给提示
+  //   Toast(res.message)
+  //   // 抛出异常，中断程序
+  //   return Promise.reject(res.message);
+  // }
+
   // 返回响应数据
   return res;
+
 
 }, function (error) {
   // 超出 2xx 范围的状态码都会触发该函数。
@@ -43,5 +43,5 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-// ③导出instance的Axios实例
-export default instance
+// ③导出DengLu的Axios实例
+export default DengLu

@@ -53,8 +53,12 @@
 // 按需导入-获取刷新图形验证码api图片-getPicCodeApi
 // 按需导入-获取短信验证码验证码api图片-gerMsgCodeApi
 // 按需导入-登录api-codeLogin
-import { getPicCodeApi, gerMsgCodeApi, codeLogin } from "@/api/login.js";
-import {} from "@/api/login.js";
+import {
+  getPicCodeApi,
+  gerMsgCodeApi,
+  // codeLogin,
+  Denglu,
+} from "@/api/login.js";
 
 export default {
   name: "LoginIndex",
@@ -137,11 +141,12 @@ export default {
         this.$toast("请输入正确的短信验证码");
         return;
       }
-      // 发起登录请求
-      const res = await codeLogin(this.mobile, this.msgCode);
+      // 发起登录请求（自己json-server写的登录请求）
+      const res = await Denglu();
+      this.$store.commit("user/setUserInfo", res.data);
+      // console.log(res);
       this.$router.push("/");
       this.$toast("登录成功");
-      console.log(res);
     },
   },
 
