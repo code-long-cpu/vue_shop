@@ -16,6 +16,7 @@ import Category from '@/views/layout/category.vue'
 import Cart from '@/views/layout/cart.vue'
 import User from '@/views/layout/user.vue'
 
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,28 @@ const router = new VueRouter({
     { path: '/myorder', component: MyOrder },
 
   ]
+})
+// 定义存放需要权限访问的页面
+const autUruls = ['/pay', '/myorder']
+
+// 全局前置导航守卫
+router.beforeEach((to, from, next) => {
+  // console.log(to, from, next)
+  // next()
+  // to是一个参数，有path属性就是某个网页组件，判断to.path是否在autUruls中出现过
+  if (!autUruls.includes(to.path)) {
+    // 非权限页面，直接放行
+    next()
+    return
+  }
+  // 权限页面，需要判断token
+  const token = store.state.user.userInfo.token
+  // console.log(token)
+  if (token) {
+    next()
+  } else {
+    next('/login')
+  }
 })
 
 export default router

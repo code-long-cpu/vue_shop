@@ -141,9 +141,11 @@ export default {
         this.$toast("请输入正确的短信验证码");
         return;
       }
-      // 发起登录请求（自己json-server写的登录请求）
+      // 发起登录请求（自己json-server写的登录请求）,
+      // 登陆成功后会返回唯一的token值和id，用于登录后的一些操作
+      // 将token和id值存入vuex用于随时调用
       const res = await Denglu();
-      this.$store.commit("user/setUserInfo", res.data);
+      this.$store.commit("user/setUserInfo", res[0]);
       // console.log(res);
       this.$router.push("/");
       this.$toast("登录成功");

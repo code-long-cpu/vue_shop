@@ -14,6 +14,16 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
+
+  // 开启loading，禁止背景点击
+  Toast.loading({
+    message: '加载中...',
+    forbidClick: true, //禁止背景点击
+    loadingType: 'spinner', //配置loading图标
+    duration: 0, //不会自动消失（响应拦截器响应时就关闭）
+
+  });
+
   return config;
 }, function (error) {
   // 对请求错误做些什么
@@ -31,8 +41,11 @@ instance.interceptors.response.use(function (response) {
   if (res.status !== 200) {
     // 弹出给提示toast，message就是后台给的信息”很抱歉，图形验证码不正确“
     Toast(res.message)
-    //在控制台抛出红色异常。中断程序，下面的短信验证码倒计时不执行
+    //在控制台抛出红色异常（这个不是报错）。中断程序执行，下面的短信验证码倒计时不执行
     return Promise.reject(res.message);
+  } else {
+    // 清除toast提示，他是单例模式，同一时间只能存在一个toast，后面的会覆盖前面的。
+    Toast.clear()
   }
   // 返回响应数据
   return res;
