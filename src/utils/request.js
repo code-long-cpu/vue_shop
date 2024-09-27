@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Toast } from 'vant'
 
 // ①创建axios实例对象。Axios是类，有构造函数功能，所以能建多个不同的实例对象。以前是直接axios发请求，现在先创建实例（对象），再通过实例对象发请求。
-const instance = axios.create({
+const request = axios.create({
   baseURL: 'http://smart-shop.itheima.net/index.php?s=/api',
   timeout: 5000,
   headers: { platform: "H5" },
@@ -12,7 +12,7 @@ const instance = axios.create({
 // 配置请求拦截器， 响应拦截器
 
 // 添加请求拦截器
-instance.interceptors.request.use(function (config) {
+request.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
 
   // 开启loading，禁止背景点击
@@ -31,7 +31,7 @@ instance.interceptors.request.use(function (config) {
 });
 
 // 添加响应拦截器
-instance.interceptors.response.use(function (response) {
+request.interceptors.response.use(function (response) {
   // 2xx 范围内的状态码都会触发该函数。
   // 对响应数据做点什么
   const res = response.data;
@@ -56,5 +56,5 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-// ③导出instance的Axios实例
-export default instance
+// ③导出request的Axios实例
+export default request
