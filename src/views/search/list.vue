@@ -45,12 +45,6 @@ export default {
     GoodsItem,
   },
 
-  data() {
-    return {
-      page: 1,
-      proList: [],
-    };
-  },
   // 获取地址栏里面的搜索参数关键词
   computed: {
     querySearch() {
@@ -58,17 +52,23 @@ export default {
     },
   },
 
+  data() {
+    return {
+      page: 1,
+      proList: [],
+    };
+  },
+
   async created() {
-    const {
-      data: { list },
-    } = await getProList({
+    const res = await getProList({
       categoryId: this.$route.query.categoryId,
       goodsName: this.querySearch,
       page: this.page,
     });
-    // console.log(res);
-    this.proList = list.data;
+    console.log(res);
+    this.proList = res.data.list.data;
   },
+  // methods: {},
 };
 </script>
 <style lang="less" scoped>

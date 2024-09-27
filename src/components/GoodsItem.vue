@@ -1,4 +1,5 @@
 <template>
+  <!-- path路径动态路由传参 -->
   <div
     v-if="item.goods_id"
     class="goods-item"
