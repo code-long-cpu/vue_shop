@@ -112,14 +112,20 @@
             </div>
           </div>
         </div>
+        <!-- 购买数量 -->
         <div class="num-box">
           <span>数量</span>
-          数字框占位
+          <!-- 简写：v-model用于子组件，就是:value(父传子) 和@input(子传父)的简写； -->
+          <!-- <CountBox v-model="addCount"></CountBox> -->
+          <!-- 完整写法： methods中需要添加input方法接受子组件的方法，修改addCount的值-->
+          <CountBox :value="addCount" @input="input"></CountBox>
         </div>
 
         <!-- 按断是否有库存，再加入购物车或者购买 -->
         <div class="showbtn" v-if="detail.stock_total > 0">
-          <div class="btn" v-if="mode === 'cart'">加入购物车</div>
+          <div class="btn" v-if="mode === 'cart'" @click="addCart">
+            加入购物车
+          </div>
           <div class="btn now" v-else>立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
@@ -129,9 +135,13 @@
 </template>
 
 <script>
+// 导入获取商品详情和评价的api方法
 import { getProDetail, getProComments } from "@/api/product.js";
-// 导入头像
+// 导入用户的默认头像
 import default_avater from "@/assets/default-avatar.png";
+// 导入计数盒子组件
+import CountBox from "@/components/CountBox.vue";
+
 export default {
   name: "ProDetail",
   data() {
@@ -144,7 +154,11 @@ export default {
       default_avater, //用户头像
       showPannel: false, //购物车弹层面板默认值，关闭
       mode: "cart", //购物车状态
+      addCount: 5, //购买数量的数字框绑定的数据
     };
+  },
+  components: {
+    CountBox,
   },
   // 计算属性访问数据方便
   computed: {
@@ -201,6 +215,44 @@ export default {
     buyFn() {
       this.mode = "buyNow";
       this.showPannel = true;
+    },
+    input(count) {
+      this.addCount = count;
+    },
+    // 立即购买
+    addCart() {
+      // 判断是否有token（即是否登录）
+      // 1-若token不存在，弹窗请求登录
+      // 2-若token存在，继续下一步
+      if (!this.$store.getters.token) {
+        // console.log("弹出确认框");
+        // 也可以直接调用:
+        // this.$dialog.confirm()
+        // 常规写法（全局写法）
+        this.$dialog
+          .confirm({
+            title: "温馨提示",
+            message: "需要先登录才能继续操作",
+            confirmButtonText: "去登录丫的",
+            cancelButtonText: "滚你丫的",
+          })
+          // 确认按钮
+          .then(() => {
+            // 如果希望跳转到登录，再跳转回来当前页面，需要跳转过去携带参数（参数即当前的路径地址）this.$route.fullPath(包含查询参数) path不带参数
+            this.$router.replace({
+              path: "/login",
+              query: {
+                backUrl: this.$route.fullPath,
+              },
+            });
+          })
+          // 取消按钮
+          .catch(() => {
+            // on cancel
+          });
+        // return;
+      }
+      console.log("正常请求");
     },
   },
 };

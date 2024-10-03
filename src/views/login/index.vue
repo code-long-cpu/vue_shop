@@ -118,7 +118,7 @@ export default {
         await gerMsgCodeApi({
           captchaCode: this.picCode,
           captchaKey: this.picKey,
-          mobile: this.mobile, 
+          mobile: this.mobile,
         });
         this.$toast("短信验证码发送成功，请注意查收");
 
@@ -149,14 +149,17 @@ export default {
       // 登陆成功后会返回唯一的token值和id，用于登录后的一些操作
       // 将token和id值存入vuex用于随时调用
       const res = await Denglu();
-      // this.$store.commit("user/setUserInfo", res[0]);
-      // console.log(res);
-      this.$router.push("/");
+      this.$store.commit("user/setUserInfo", res[0]);
+      console.log(res);
+      // this.$router.push("/");
       this.$toast("登录成功");
 
-      // // 原文登录选项尝试
-      // const res = await codeLogin(this.mobile, this.msgCode);
-      // console.log(res);
+      // 判断地址栏有无回跳地址backUrl参数
+      // 如果有，说明是其他页面拦截登录跳转回来的；登录后在跳去回跳地址
+      // 如果没有，正常去首页即可
+      const url = this.$route.query.backUrl || "/"; //获取导航栏参数,没有就用/跳转去首页
+      // this.$router.push(url); //用push回保留原来的登录页，点击返回会回到登录页；
+      this.$router.replace(url); //用replace直接替换网页，不会有历史记录，push会有历史记录
     },
   },
 
