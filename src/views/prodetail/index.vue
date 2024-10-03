@@ -9,7 +9,7 @@
 
     <van-swipe :autoplay="3000" @change="onChange">
       <van-swipe-item v-for="(image, index) in images" :key="index">
-        <img :src="image" />
+        <img :src="image.external_url" />
       </van-swipe-item>
 
       <template #indicator>
@@ -23,14 +23,13 @@
     <div class="info">
       <div class="title">
         <div class="price">
-          <span class="now">￥0.01</span>
-          <span class="oldprice">￥6699.00</span>
+          <span class="now">￥{{ detail.goods_price_min }}</span>
+          <span class="oldprice">￥{{ detail.goods_price_max }}</span>
         </div>
-        <div class="sellcount">已售1001件</div>
+        <div class="sellcount">已售{{ detail.goods_sales }}件</div>
       </div>
       <div class="msg text-ellipsis-2">
-        三星手机 SAMSUNG Galaxy S23 8GB+256GB 超视觉夜拍系统 超清夜景 悠雾紫
-        5G手机 游戏拍照旗舰机s23
+        {{ detail.goods_name }}
       </div>
 
       <div class="service">
@@ -47,50 +46,35 @@
     <!-- 商品评价 -->
     <div class="comment">
       <div class="comment-title">
-        <div class="left">商品评价 (5条)</div>
+        <div class="left">商品评价 ({{ total }}条)</div>
         <div class="right">查看更多 <van-icon name="arrow" /></div>
       </div>
       <div class="comment-list">
-        <div class="comment-item" v-for="item in 3" :key="item">
+        <div
+          class="comment-item"
+          v-for="item in commentList"
+          :key="item.comment_id"
+        >
           <div class="top">
-            <img
-              src="http://cba.itlike.com/public/uploads/10001/20230321/a0db9adb2e666a65bc8dd133fbed7834.png"
-              alt=""
-            />
-            <div class="name">神雕大侠</div>
+            <!-- 头像 -->
+            <img :src="item.user.avatar_url || default_avater" alt="" />
+            <div class="name">"{{ item.user.nick_name }}"</div>
             <van-rate
               :size="16"
-              :value="5"
+              :value="item.score / 2"
               color="#ffd21e"
               void-icon="star"
               void-color="#eee"
             />
           </div>
-          <div class="content">质量很不错 挺喜欢的</div>
-          <div class="time">2023-03-21 15:01:35</div>
+          <div class="content">{{ item.content }}</div>
+          <div class="time">{{ item.create_time }}</div>
         </div>
       </div>
     </div>
 
     <!-- 商品描述 -->
-    <div class="desc">
-      <img
-        src="https://uimgproxy.suning.cn/uimg1/sop/commodity/kHgx21fZMWwqirkMhawkAw.jpg"
-        alt=""
-      />
-      <img
-        src="https://uimgproxy.suning.cn/uimg1/sop/commodity/0rRMmncfF0kGjuK5cvLolg.jpg"
-        alt=""
-      />
-      <img
-        src="https://uimgproxy.suning.cn/uimg1/sop/commodity/2P04A4Jn0HKxbKYSHc17kw.jpg"
-        alt=""
-      />
-      <img
-        src="https://uimgproxy.suning.cn/uimg1/sop/commodity/MT4k-mPd0veQXWPPO5yTIw.jpg"
-        alt=""
-      />
-    </div>
+    <div class="desc" v-html="detail.content"></div>
 
     <!-- 底部 -->
     <div class="footer">
@@ -109,17 +93,19 @@
 </template>
 
 <script>
-import { getProDetail } from "@/api/product.js";
+import { getProDetail, getProComments } from "@/api/product.js";
+// 导入头像
+import default_avater from "@/assets/default-avatar.png";
 export default {
   name: "ProDetail",
   data() {
     return {
-      images: [
-        "https://img01.yzcdn.cn/vant/apple-1.jpg",
-        "https://img01.yzcdn.cn/vant/apple-2.jpg",
-      ],
+      images: [], //商品图片
       current: 0,
-      detail: {},
+      detail: {}, //商品详情
+      total: 0, //评价总数
+      commentList: [], //评价总数
+      default_avater, //用户头像
     };
   },
   // 计算属性访问数据方便
@@ -130,17 +116,40 @@ export default {
   },
 
   created() {
+    // 获取商品详情
     this.getDetail();
+    // 获取商品评价
+    this.getComments();
   },
 
   methods: {
     onChange(index) {
       this.current = index;
     },
+
+    // 获取商品详情
     async getDetail() {
       try {
-        const res = await getProDetail(this.goodsId);
-        console.log(res);
+        const {
+          data: { detail },
+        } = await getProDetail(this.goodsId);
+        this.detail = detail;
+        this.images = detail.goods_images;
+        console.log(detail);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    // 获取商品评价
+    async getComments() {
+      try {
+        const {
+          data: { list, total },
+        } = await getProComments(this.goodsId, 3);
+        // console.log(res);
+        this.commentList = list;
+        this.total = total;
+        console.log(list);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

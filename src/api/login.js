@@ -14,7 +14,8 @@ export const getPicCodeApi = () => {
 }
 
 // ②api获取短信验证码
-export const gerMsgCodeApi = (captchaCode, captchaKey, mobile) => {
+export const gerMsgCodeApi = (obj) => {
+  const { captchaCode, captchaKey, mobile } = obj
   return request({
     url: "/captcha/sendSmsCaptcha",
     method: "post",
@@ -26,8 +27,9 @@ export const gerMsgCodeApi = (captchaCode, captchaKey, mobile) => {
   })
 }
 
-// ③api登录请求
-// export const codeLogin = (mobile, smsCode) => {
+// ③原文的api登录请求 ❌不能用
+// export const codeLogin = ({ obj }) => {
+//   const { isParty, mobile, partyData, smsCode } = obj;
 //   return request({
 //     url: "/passport/login",
 //     method: "post",
@@ -42,7 +44,7 @@ export const gerMsgCodeApi = (captchaCode, captchaKey, mobile) => {
 //   })
 // }
 
-// ③api登录请求
+// ③自己写的api登录请求 ✅能用
 export const Denglu = () => {
   return DengLu({
     url: "/data",
