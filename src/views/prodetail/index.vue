@@ -84,6 +84,7 @@
         <span>首页</span>
       </div>
       <div class="icon-cart">
+        <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
         <van-icon name="shopping-cart-o" />
         <span>购物车</span>
       </div>
@@ -156,6 +157,7 @@ export default {
       showPannel: false, //购物车弹层面板默认值，关闭
       mode: "cart", //购物车状态
       addCount: 5, //购买数量的数字框绑定的数据
+      cartTotal: 0, //购物车数量
     };
   },
   components: {
@@ -253,12 +255,16 @@ export default {
           });
         return;
       }
-      console.log("正常请求");
-      const res = await addCart(
+      // console.log("正常请求");
+      const { data } = await addCart(
         this.goodsId,
         this.addCount,
         this.detail.skuList[0].goods_sku_id
       );
+      this.cartTotal = data.cartTotal;
+      this.$toast("加入购物车成功");
+      this.showPannel = false;
+      console.log(this.cartTotal);
     },
   },
 };
@@ -456,6 +462,22 @@ export default {
   }
   .btn-none {
     background-color: #cccccc;
+  }
+}
+.footer .icon-cart {
+  position: relative;
+  padding: 0 6px;
+  .num {
+    z-index: 999;
+    position: absolute;
+    top: -2px;
+    right: 0;
+    min-width: 16px;
+    padding: 0 4px;
+    color: #fff;
+    text-align: center;
+    background-color: #ee0a24;
+    border-radius: 50%;
   }
 }
 </style>

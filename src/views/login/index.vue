@@ -145,14 +145,21 @@ export default {
         this.$toast("请输入正确的短信验证码");
         return;
       }
+      // ✅老师的
+      const res = await codeLogin(this.mobile, this.msgCode);
+      // this.$router.push("/");
+      console.log(res);
+      this.$store.commit("user/setUserInfo", res.data);
+      this.$toast("登录成功");
+
+      // ✅自己写的
       // 发起登录请求（自己json-server写的登录请求）,
       // 登陆成功后会返回唯一的token值和id，用于登录后的一些操作
       // 将token和id值存入vuex用于随时调用
-      const res = await Denglu();
-      this.$store.commit("user/setUserInfo", res[0]);
-      console.log(res);
-      // this.$router.push("/");
-      this.$toast("登录成功");
+      // const res = await Denglu();
+      // this.$store.commit("user/setUserInfo", res[0]);
+      // console.log(res);
+      // this.$toast("登录成功");
 
       // 判断地址栏有无回跳地址backUrl参数
       // 如果有，说明是其他页面拦截登录跳转回来的；登录后在跳去回跳地址

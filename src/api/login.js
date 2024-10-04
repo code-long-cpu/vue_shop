@@ -27,27 +27,22 @@ export const gerMsgCodeApi = (obj) => {
   })
 }
 
-// ③原文的api登录请求 ❌不能用
-// export const codeLogin = ({ obj }) => {
-//   const { isParty, mobile, partyData, smsCode } = obj;
-//   return request({
-//     url: "/passport/login",
-//     method: "post",
-//     // 补充，需要请求头
-//     headers: { platform: "H5" },
-//     form: {
-//       isParty: false,
-//       mobile,
-//       partyData: {},
-//       smsCode,
-//     }
-//   })
-// }
-
-// ③自己写的api登录请求 ✅能用
-export const Denglu = () => {
-  return DengLu({
-    url: "/data",
-    method: "get",
+// ③原文的api登录请求 ❌不能用，✅又能用了，我写错了
+export const codeLogin = (mobile, smsCode) => {
+  return request.post('/passport/login', {
+    form: {
+      isParty: false,
+      mobile,
+      partyData: {},
+      smsCode
+    }
   })
 }
+
+// ③自己写的api登录请求 ✅能用
+// export const Denglu = () => {
+//   return DengLu({
+//     url: "/data",
+//     method: "get",
+//   })
+// }
