@@ -4,7 +4,6 @@ import request from "@/utils/request"
 // 传递参数：
 // goodsId：表示商品id  iphone8
 // goodSkuId：表示商品规格 红色的iphon8 和 粉色的iphone8 是不一样的
-
 export const addCart = (goodsId, goodsNum, goodsSkuId) => {
   return request({
     url: '/cart/add',
@@ -15,5 +14,13 @@ export const addCart = (goodsId, goodsNum, goodsSkuId) => {
       goodsSkuId
     },
 
+  })
+}
+
+// 获取购物车请求，渲染购物车页面
+export const getCartList = () => {
+  return request({
+    url: '/cart/list',
+    method: 'GET',
   })
 }

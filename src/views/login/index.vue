@@ -145,7 +145,7 @@ export default {
         this.$toast("请输入正确的短信验证码");
         return;
       }
-      // ✅老师的
+      // ✅老师的对了，我是哪里写错了吧
       const res = await codeLogin(this.mobile, this.msgCode);
       // this.$router.push("/");
       console.log(res);
