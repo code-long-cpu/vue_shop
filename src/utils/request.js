@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Toast } from 'vant'
+import store from '@/store'
 
 // ①创建axios实例对象。Axios是类，有构造函数功能，所以能建多个不同的实例对象。以前是直接axios发请求，现在先创建实例（对象），再通过实例对象发请求。
 const request = axios.create({
@@ -21,8 +22,16 @@ request.interceptors.request.use(function (config) {
     forbidClick: true, //禁止背景点击
     loadingType: 'spinner', //配置loading图标
     duration: 0, //不会自动消失（响应拦截器响应时就关闭）
-
   });
+
+  //自动配置请求头header
+  //只要有token，就在请求头携带，便于请求需要授权的接口
+  const token = store.getters.token
+  if (token) {
+    // 特殊字符小横杠，得用中括号
+    config.headers['Access-Token'] = token
+    config.headers.platform = 'H5'
+  }
 
   return config;
 }, function (error) {

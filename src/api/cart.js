@@ -1,0 +1,19 @@
+import request from "@/utils/request"
+
+// 加入购物车请求
+// 传递参数：
+// goodsId：表示商品id  iphone8
+// goodSkuId：表示商品规格 红色的iphon8 和 粉色的iphone8 是不一样的
+
+export const addCart = (goodsId, goodsNum, goodsSkuId) => {
+  return request({
+    url: '/cart/add',
+    method: 'POST',
+    data: {
+      goodsId,
+      goodsNum,
+      goodsSkuId
+    },
+
+  })
+}

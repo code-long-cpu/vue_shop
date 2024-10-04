@@ -137,6 +137,7 @@
 <script>
 // 导入获取商品详情和评价的api方法
 import { getProDetail, getProComments } from "@/api/product.js";
+import { addCart } from "@/api/cart.js";
 // 导入用户的默认头像
 import default_avater from "@/assets/default-avatar.png";
 // 导入计数盒子组件
@@ -220,7 +221,7 @@ export default {
       this.addCount = count;
     },
     // 立即购买
-    addCart() {
+    async addCart() {
       // 判断是否有token（即是否登录）
       // 1-若token不存在，弹窗请求登录
       // 2-若token存在，继续下一步
@@ -250,9 +251,14 @@ export default {
           .catch(() => {
             // on cancel
           });
-        // return;
+        return;
       }
       console.log("正常请求");
+      const res = await addCart(
+        this.goodsId,
+        this.addCount,
+        this.detail.skuList[0].goods_sku_id
+      );
     },
   },
 };
