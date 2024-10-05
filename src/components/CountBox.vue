@@ -13,7 +13,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: 1, //没有值就默认为1；
+      default: 5, //没有值就默认为1；
     },
   },
   methods: {

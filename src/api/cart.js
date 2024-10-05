@@ -17,10 +17,24 @@ export const addCart = (goodsId, goodsNum, goodsSkuId) => {
   })
 }
 
-// 获取购物车请求，渲染购物车页面
+// 获取购物车列表请求，渲染购物车页面
 export const getCartList = () => {
   return request({
     url: '/cart/list',
     method: 'GET',
   })
 }
+
+// 更新购物车商品数量
+export const changeCount = (goodsId, goodsNum, goodsSkuId) => {
+  return request({
+    url: '//cart/update',
+    method: 'POST',
+    data: {
+      goodsId,
+      goodsNum,
+      goodsSkuId
+    }
+  })
+}
+

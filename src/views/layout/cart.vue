@@ -29,7 +29,15 @@
             <div class="price">
               ¥ <span>{{ item.goods.goods_price_min }}</span>
             </div>
-            <CountBox :value="item.goods_num"></CountBox>
+            <!-- 既希望保修原来的形参，又需要通过调用函数传参；则使用箭头函数 -->
+            <!-- <CountBox @input="changeCount" :value="item.goods_num"></CountBox> -->
+            <!-- 通过箭头函数拿到了子组件传来的值，并重新传入连个新的参数 -->
+            <CountBox
+              @input="
+                (value) => changeCount(value, item.goods_id, item.goods_sku_id)
+              "
+              :value="item.goods_num"
+            ></CountBox>
           </span>
         </div>
       </div>
@@ -95,6 +103,9 @@ export default {
     // 勾选全选
     toggleAllCheck() {
       this.$store.commit("cart/toggleAllCheck", !this.isAllChecked);
+    },
+    changeCount(goodsNum, goodsId, goodsSkuId) {
+      console.log(goodsNum, goodsId, goodsSkuId);
     },
   },
 };
