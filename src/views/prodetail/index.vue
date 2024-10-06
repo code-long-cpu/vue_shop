@@ -190,7 +190,7 @@ export default {
         } = await getProDetail(this.goodsId);
         this.detail = detail;
         this.images = detail.goods_images;
-        console.log(detail);
+        // console.log(detail);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -204,7 +204,7 @@ export default {
         // console.log(res);
         this.commentList = list;
         this.total = total;
-        console.log(list);
+        // console.log(list);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -264,7 +264,7 @@ export default {
       this.cartTotal = data.cartTotal;
       this.$toast("加入购物车成功");
       this.showPannel = false;
-      console.log(this.cartTotal);
+      // console.log(this.cartTotal);
     },
   },
 };

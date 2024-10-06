@@ -148,7 +148,7 @@ export default {
       // ✅老师的对了，我是哪里写错了吧
       const res = await codeLogin(this.mobile, this.msgCode);
       // this.$router.push("/");
-      console.log(res);
+      // console.log(res);
       this.$store.commit("user/setUserInfo", res.data);
       this.$toast("登录成功");
 

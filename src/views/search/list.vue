@@ -65,7 +65,7 @@ export default {
       goodsName: this.querySearch,
       page: this.page,
     });
-    console.log(res);
+    // console.log(res);
     this.proList = res.data.list.data;
   },
   // methods: {},

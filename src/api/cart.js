@@ -28,12 +28,23 @@ export const getCartList = () => {
 // 更新购物车商品数量
 export const changeCount = (goodsId, goodsNum, goodsSkuId) => {
   return request({
-    url: '//cart/update',
+    url: '/cart/update',
     method: 'POST',
     data: {
       goodsId,
       goodsNum,
       goodsSkuId
+    }
+  })
+}
+
+// 删除购物车某个商品
+export const delSelect = (cartIds) => {
+  return request({
+    url: '/cart/clear',
+    method: 'POST',
+    data: {
+      cartIds
     }
   })
 }

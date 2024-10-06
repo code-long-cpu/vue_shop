@@ -1,68 +1,90 @@
 <template>
   <div class="cart">
     <van-nav-bar title="购物车" fixed />
-    <!-- 购物车开头 -->
-    <div class="cart-title">
-      <span class="all"
-        >共<i>{{ cartTotal }}</i
-        >件商品</span
-      >
-      <span class="edit">
-        <van-icon name="edit" />
-        编辑
-      </span>
-    </div>
 
-    <!-- 购物车列表 -->
-    <div class="cart-list">
-      <div class="cart-item" v-for="item in cartList" :key="item.goods_id">
-        <van-checkbox
-          :value="item.isChecked"
-          @click="toggleCheck(item.goods_id)"
-        ></van-checkbox>
-        <div class="show">
-          <img :src="item.goods.goods_image" alt="" />
-        </div>
-        <div class="info">
-          <span class="tit text-ellipsis-2">{{ item.goods.goods_name }}</span>
-          <span class="bottom">
-            <div class="price">
-              ¥ <span>{{ item.goods.goods_price_min }}</span>
-            </div>
-            <!-- 既希望保修原来的形参，又需要通过调用函数传参；则使用箭头函数 -->
-            <!-- <CountBox @input="changeCount" :value="item.goods_num"></CountBox> -->
-            <!-- 通过箭头函数拿到了子组件传来的值，并重新传入连个新的参数 -->
-            <CountBox
-              @input="
-                (value) => changeCount(value, item.goods_id, item.goods_sku_id)
-              "
-              :value="item.goods_num"
-            ></CountBox>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-fixed">
-      <div class="all-check" @click="toggleAllCheck">
-        <van-checkbox icon-size="18" :value="isAllChecked"></van-checkbox>
-        全选
+    <!-- 购物车不为空 -->
+    <div v-if="isLogin && cartList.length > 0">
+      <!-- 购物车开头 -->
+      <div class="cart-title">
+        <span class="all"
+          >共<i>{{ cartTotal }}</i
+          >件商品</span
+        >
+        <span class="edit" @click="isEdit = !isEdit">
+          <van-icon name="edit" />
+          编辑
+        </span>
       </div>
 
-      <div class="all-total">
-        <div class="price">
-          <span>合计：</span>
-          <span
-            >¥ <i class="totalPrice">{{ selPrice }}</i></span
+      <!-- 购物车列表 -->
+      <div class="cart-list">
+        <div class="cart-item" v-for="item in cartList" :key="item.goods_id">
+          <van-checkbox
+            :value="item.isChecked"
+            @click="toggleCheck(item.goods_id)"
+          ></van-checkbox>
+          <div class="show">
+            <img :src="item.goods.goods_image" alt="" />
+          </div>
+          <div class="info">
+            <span class="tit text-ellipsis-2">{{ item.goods.goods_name }}</span>
+            <span class="bottom">
+              <div class="price">
+                ¥ <span>{{ item.goods.goods_price_min }}</span>
+              </div>
+              <!-- 既希望保修原来的形参，又需要通过调用函数传参；则使用箭头函数 -->
+              <!-- <CountBox @input="changeCount" :value="item.goods_num"></CountBox> -->
+              <!-- 通过箭头函数拿到了子组件传来的值，并重新传入连个新的参数 -->
+              <CountBox
+                @input="
+                  (value) =>
+                    changeCount(value, item.goods_id, item.goods_sku_id)
+                "
+                :value="item.goods_num"
+              ></CountBox>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 购物车底部 -->
+      <div class="footer-fixed">
+        <div class="all-check" @click="toggleAllCheck">
+          <van-checkbox icon-size="18" :value="isAllChecked"></van-checkbox>
+          全选
+        </div>
+
+        <div class="all-total">
+          <div class="price">
+            <span>合计：</span>
+            <span
+              >¥ <i class="totalPrice">{{ selPrice }}</i></span
+            >
+          </div>
+          <div
+            v-if="!isEdit"
+            class="goPay"
+            :class="{ disabled: selCount === 0 }"
           >
-        </div>
-        <div v-if="true" class="goPay" :class="{ disabled: selCount === 0 }">
-          结算({{ selCount }})
-        </div>
-        <div v-else class="delete" :class="{ disabled: selCount === 0 }">
-          删除
+            结算({{ selCount }})
+          </div>
+          <div
+            v-else
+            class="delete"
+            @click="handleDel"
+            :class="{ disabled: selCount === 0 }"
+          >
+            删除
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- 二、购物车为空 -->
+    <div class="empty-cart" v-else>
+      <img src="@/assets/empty.png" alt="" />
+      <div class="tips">您的购物车是空的, 快去逛逛吧</div>
+      <div class="btn" @click="$router.push('/')">去逛逛</div>
     </div>
   </div>
 </template>
@@ -76,6 +98,11 @@ export default {
   components: {
     CountBox,
   },
+  data() {
+    return {
+      isEdit: false,
+    };
+  },
   // 映射vuex仓库中的数据过来
   computed: {
     ...mapState("cart", ["cartList"]),
@@ -86,12 +113,15 @@ export default {
       "selPrice",
       "isAllChecked",
     ]),
+    isLogin() {
+      return this.$store.getters.token;
+    },
   },
 
   // 一到购物车页面就请求购物车数据
   created() {
     // 必须是登录过的用户，才能打开购物车
-    if (this.$store.getters.token) {
+    if (this.isLogin) {
       this.$store.dispatch("cart/getCartAction");
     }
   },
@@ -104,8 +134,28 @@ export default {
     toggleAllCheck() {
       this.$store.commit("cart/toggleAllCheck", !this.isAllChecked);
     },
+    // 购物车列表中的子组件中加减商品数量
     changeCount(goodsNum, goodsId, goodsSkuId) {
-      console.log(goodsNum, goodsId, goodsSkuId);
+      // console.log(goodsNum, goodsId, goodsSkuId);
+      this.$store.dispatch("cart/changeCountAction", {
+        goodsNum,
+        goodsId,
+        goodsSkuId,
+      });
+    },
+    async handleDel() {
+      if (this.selCount === 0) return; //虽然但是前面已经加了类名disabled判断了。。selCount===0点击不了的
+      await this.$store.dispatch("cart/vuexDelSelect");
+      this.isEdit = false;
+    },
+  },
+  watch: {
+    isEdit(value) {
+      if (value) {
+        this.$store.commit("cart/toggleAllCheck", false);
+      } else {
+        this.$store.commit("cart/toggleAllCheck", true);
+      }
     },
   },
 };
@@ -244,6 +294,31 @@ export default {
         background-color: #ff9779;
       }
     }
+  }
+}
+.empty-cart {
+  padding: 80px 30px;
+  img {
+    width: 140px;
+    height: 92px;
+    display: block;
+    margin: 0 auto;
+  }
+  .tips {
+    text-align: center;
+    color: #666;
+    margin: 30px;
+  }
+  .btn {
+    width: 110px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background-color: #fa2c20;
+    border-radius: 16px;
+    color: #fff;
+    display: block;
+    margin: 0 auto;
   }
 }
 </style>

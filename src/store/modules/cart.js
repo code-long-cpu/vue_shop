@@ -1,5 +1,6 @@
 
-import { getCartList } from '@/api/cart'
+import { getCartList, changeCount, delSelect } from '@/api/cart'
+import { Toast } from 'vant'
 
 export default {
   namespaced: true,
@@ -21,10 +22,16 @@ export default {
     // 让所有的小选框，同步全选设置
     toggleAllCheck(state, flag) {
       state.cartList.forEach(item => item.isChecked = flag)
+    },
+    // 修改增减窗口商品数量
+    changelocalCount(state, { goodsId, goodsNum }) {
+      const goods = state.cartList.find(item => item.goods_id === goodsId)
+      goods.goods_num = goodsNum
     }
 
   },
   actions: {
+    // 获取购物车列表请求
     async getCartAction(context) {
       // const res = await getCartList()
       const { data } = await getCartList()
@@ -37,8 +44,29 @@ export default {
       })
 
       // console.log(res)
-      console.log(data.list)
+      // console.log(data.list)
       context.commit('setCartList', data.list)
+    },
+    // 数字框修改数量
+    async changeCountAction(context, obj) {
+      const { goodsNum, goodsId, goodsSkuId } = obj
+      // ①先本地修改-购物车列表商品数量的加减-mutation
+      context.commit('changelocalCount', { goodsId, goodsNum })
+      // ②再同步到后台-购物车列表商品数量的加减
+      await changeCount(goodsId, goodsNum, goodsSkuId)
+      // console.log(res)
+    },
+
+    async vuexDelSelect(context) {
+      const selCartList = context.getters.selCartList
+      const cartIds = selCartList.map(item => item.id)
+      // console.log(cartIds)
+      await delSelect(cartIds)
+      Toast('删除成功')
+      // this.$toast("删除成功");
+
+      // 重新拉取最新的购物车数据
+      context.dispatch('getCartAction')
     }
   },
   getters: {
