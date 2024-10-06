@@ -13,12 +13,12 @@
         <van-icon name="logistics" />
       </div>
 
-      <div class="info" v-if="true">
+      <div class="info" v-if="selectedAddress.address_id">
         <div class="info-content">
-          <span class="name">小红</span>
-          <span class="mobile">13811112222</span>
+          <span class="name">{{ selectedAddress.name }}</span>
+          <span class="mobile">{{ selectedAddress.phone }}</span>
         </div>
-        <div class="info-address">江苏省 无锡市 南长街 110号 504</div>
+        <div class="info-address">{{ longAddress }}</div>
       </div>
 
       <div class="info" v-else>请选择配送地址</div>
@@ -107,12 +107,40 @@
 </template>
 
 <script>
+import { getAddressList } from "@/api/address";
 export default {
   name: "PayIndex",
   data() {
-    return {};
+    return {
+      addressList: [],
+    };
   },
-  methods: {},
+  computed: {
+    selectedAddress() {
+      return this.addressList[0] || {};
+    },
+    longAddress() {
+      const region = this.selectedAddress.region;
+      return (
+        region.city +
+        region.province +
+        region.region +
+        this.selectedAddress.detail
+      );
+    },
+  },
+  created() {
+    this.getAddressList();
+  },
+  methods: {
+    async getAddressList() {
+      const {
+        data: { list },
+      } = await getAddressList();
+      console.log(list);
+      this.addressList = list;
+    },
+  },
 };
 </script>
 

@@ -12,7 +12,7 @@
             v-model="mobile"
             class="inp"
             maxlength="11"
-            placeholder="请输入手机号码"
+            placeholder="13811112222"
             type="text"
           />
         </div>
@@ -31,7 +31,7 @@
           <input
             v-model="msgCode"
             class="inp"
-            placeholder="请输入短信验证码246810"
+            placeholder="短信验证码246810"
             type="text"
           />
           <button @click="getCode">
