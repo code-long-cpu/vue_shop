@@ -16,7 +16,7 @@ import Category from '@/views/layout/category.vue'
 import Cart from '@/views/layout/cart.vue'
 import User from '@/views/layout/user.vue'
 
-// import store from '@/store'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -59,7 +59,8 @@ router.beforeEach((to, from, next) => {
   // 权限页面，需要判断token
   // const token = store.state.user.userInfo.token
   // 简化代码：用getters获取
-  const token = this.$store.getters.token
+  const token = store.getters.token
+  // const token = this.$store.getters.token
   // console.log(token)
   if (token) {
     next()
