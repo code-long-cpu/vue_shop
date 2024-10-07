@@ -12,7 +12,7 @@
             v-model="mobile"
             class="inp"
             maxlength="11"
-            placeholder="13811112222"
+            placeholder="13888888888"
             type="text"
           />
         </div>

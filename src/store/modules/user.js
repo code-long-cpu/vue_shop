@@ -21,6 +21,14 @@ export default {
       setInfo(obj);
     }
   },
-  actions: {},
+  actions: {
+    logout(context) {
+      // user个人信息重置,等于一个空对象{}
+      context.commit('setUserInfo', {})
+
+      // cart购物车信息重置，跨模块调用mutation中的 cart/setCartList
+      context.commit('cart/setCartList', [], { root: true })
+    }
+  },
   getters: {},
 }

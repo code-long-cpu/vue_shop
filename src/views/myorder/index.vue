@@ -13,7 +13,9 @@
       v-for="item in list"
       :key="item.order_id"
       :item="item"
-    ></OrderListItem>
+    >
+    
+    </OrderListItem>
   </div>
 </template>
 
