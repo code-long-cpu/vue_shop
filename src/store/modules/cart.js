@@ -70,15 +70,15 @@ export default {
     }
   },
   getters: {
-    // 求购物车中所有商品的数量
+    // 求购物车中所有商品的数量（顶部位置的红色商品总量数字）
     cartTotal(state) {
       return state.cartList.reduce((sum, item) => sum + item.goods_num, 0)
     },
-    // 过滤出勾选的商品项
+    // 过滤出勾选的商品项（☑️勾选的商品项）
     selCartList(state) {
       return state.cartList.filter(item => item.isChecked)
     },
-    // 求勾选的商品总数量
+    // 求勾选的商品总数量（结算按钮位置的商品量数字）
     selCount(state, getters) {
       return getters.selCartList.reduce((sum, item) => sum + item.goods_num, 0)
     },

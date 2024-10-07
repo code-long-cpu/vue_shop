@@ -17,3 +17,31 @@ export const checkOrder = (mode, obj) => {
     }
   })
 }
+
+// 提交订单
+// mode:cart =>obj {cardIds ,remark} 格式是string
+// mode:buyNow =>obj {goodsId,goodNum,goodsSkuId,remark}
+export const submitOrder = (mode, obj) => {
+  return request({
+    url: '/checkout/submit',
+    method: 'POST',
+    data: {
+      mode,
+      delivery: 10,   //物流方式， 默认： 10
+      couponId: 0,    //优惠券id，默认：0
+      isUsePoints: 0, //是否使用积分 1-使用, 0-不使用
+      payType: 10,    //支付方式，10：余额支付
+      ...obj
+    }
+  })
+}
+
+// 订单列表
+export const getMyOrderList = (dataType, page) => {
+  return request.get('/order/list', {
+    params: {
+      dataType,
+      page    //用vant里面的list做分页
+    }
+  })
+}

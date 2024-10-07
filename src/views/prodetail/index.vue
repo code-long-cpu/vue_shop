@@ -92,7 +92,7 @@
       <div @click="buyFn" class="btn-buy">立刻购买</div>
     </div>
 
-    <!-- 加入购物车的弹层 -->
+    <!-- 加入购物车和立即购买的弹层 -->
     <van-action-sheet
       v-model="showPannel"
       :title="mode === 'cart' ? '加入购物车' : '立刻购买'"
@@ -127,7 +127,7 @@
           <div class="btn" v-if="mode === 'cart'" @click="addCart">
             加入购物车
           </div>
-          <div class="btn now" v-else>立刻购买</div>
+          <div class="btn now" v-else @click="goBuyNow">立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
       </div>
@@ -143,9 +143,14 @@ import { addCart } from "@/api/cart.js";
 import default_avater from "@/assets/default-avatar.png";
 // 导入计数盒子组件
 import CountBox from "@/components/CountBox.vue";
+// 导入mixins的登录弹窗判断
+import loginConfirm from "@/mixins/loginConfirm";
 
 export default {
   name: "ProDetail",
+  // 导入mixins的登录弹窗判断
+  mixins: [loginConfirm],
+
   data() {
     return {
       images: [], //商品图片
@@ -222,37 +227,12 @@ export default {
     input(count) {
       this.addCount = count;
     },
-    // 立即购买
+    // 加入购物车
     async addCart() {
       // 判断是否有token（即是否登录）
       // 1-若token不存在，弹窗请求登录
       // 2-若token存在，继续下一步
-      if (!this.$store.getters.token) {
-        // console.log("弹出确认框");
-        // 也可以直接调用:
-        // this.$dialog.confirm()
-        // 常规写法（全局写法）
-        this.$dialog
-          .confirm({
-            title: "温馨提示",
-            message: "需要先登录才能继续操作",
-            confirmButtonText: "去登录丫的",
-            cancelButtonText: "滚你丫的",
-          })
-          // 确认按钮
-          .then(() => {
-            // 如果希望跳转到登录，再跳转回来当前页面，需要跳转过去携带参数（参数即当前的路径地址）this.$route.fullPath(包含查询参数) path不带参数
-            this.$router.replace({
-              path: "/login",
-              query: {
-                backUrl: this.$route.fullPath,
-              },
-            });
-          })
-          // 取消按钮
-          .catch(() => {
-            // on cancel
-          });
+      if (this.loginConfirm()) {
         return;
       }
       // console.log("正常请求");
@@ -265,6 +245,22 @@ export default {
       this.$toast("加入购物车成功");
       this.showPannel = false;
       // console.log(this.cartTotal);
+    },
+
+    // 立刻购买
+    goBuyNow() {
+      if (this.loginConfirm()) {
+        return;
+      }
+      this.$router.push({
+        path: "/pay",
+        query: {
+          mode: "buyNow",
+          goodsId: this.goodsId,
+          goodsSkuId: this.detail.skuList[0].goods_sku_id,
+          goodsNum: this.addCount,
+        },
+      });
     },
   },
 };

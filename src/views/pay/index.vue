@@ -95,6 +95,7 @@
           id=""
           cols="30"
           rows="10"
+          v-model="remark"
         ></textarea>
       </div>
     </div>
@@ -104,14 +105,14 @@
       <div class="left">
         实付款：<span>￥{{ order.orderTotalPrice }}</span>
       </div>
-      <div class="tipsbtn">提交订单</div>
+      <div class="tipsbtn" @click="submitOrder">提交订单</div>
     </div>
   </div>
 </template>
 
 <script>
 import { getAddressList } from "@/api/address";
-import { checkOrder } from "@/api/order";
+import { checkOrder, submitOrder } from "@/api/order";
 
 export default {
   name: "PayIndex",
@@ -120,6 +121,7 @@ export default {
       addressList: [],
       order: {},
       personal: {},
+      remark: "", //留言备注
     };
   },
   computed: {
@@ -137,12 +139,23 @@ export default {
         this.selectedAddress.detail
       );
     },
-    // 获取购物车列表结算传递来的参数mode和cardIds
+    // 购物车列表结算传递来的参数mode和cardIds
     mode() {
       return this.$route.query.mode;
     },
     cartIds() {
       return this.$route.query.cartIds;
+    },
+
+    // 立即购买传递来的参数mode和cardIds
+    goodsId() {
+      return this.$route.query.goodsId;
+    },
+    goodsSkuId() {
+      return this.$route.query.goodsSkuId;
+    },
+    goodsNum() {
+      return this.$route.query.goodsNum;
     },
   },
   created() {
@@ -159,14 +172,48 @@ export default {
       this.addressList = list;
     },
     async getOrderList() {
-      const {
-        data: { order, personal },
-      } = await checkOrder(this.mode, {
-        cartIds: this.cartIds,
-      });
-      this.order = order;
-      this.personal = personal;
-      console.log(order);
+      // 购物车结算
+      if (this.mode === "cart") {
+        const {
+          data: { order, personal },
+        } = await checkOrder(this.mode, {
+          cartIds: this.cartIds,
+        });
+        this.order = order;
+        this.personal = personal;
+        // console.log(order);
+      }
+      // 立即购买结算(没钱用13888888888登录)
+      if (this.mode === "buyNow") {
+        const {
+          data: { order, personal },
+        } = await checkOrder(this.mode, {
+          goodsId: this.goodsId,
+          goodsSkuId: this.goodsSkuId,
+          goodsNum: this.goodsNum,
+        });
+        this.order = order;
+        this.personal = personal;
+        // console.log(order);
+      }
+    },
+    async submitOrder() {
+      if (this.mode === "cart") {
+        await submitOrder(this.mode, {
+          cartIds: this.cartIds,
+          remark: this.remark,
+        });
+      }
+      if (this.mode === "buyNow") {
+        await submitOrder(this.mode, {
+          goodsId: this.goodsId,
+          goodsSkuId: this.goodsSkuId,
+          goodsNum: this.goodsNum,
+          remark: this.remark,
+        });
+      }
+      this.$toast.success("支付成功");
+      this.$router.replace("/myorder");
     },
   },
 };
