@@ -65,6 +65,7 @@
             v-if="!isEdit"
             class="goPay"
             :class="{ disabled: selCount === 0 }"
+            @click="goPay"
           >
             结算({{ selCount }})
           </div>
@@ -124,6 +125,9 @@ export default {
     if (this.isLogin) {
       this.$store.dispatch("cart/getCartAction");
     }
+    // console.log(this.selCount);
+    // console.log(this.selCartList);
+    // console.log(...this.selCartList.map((item) => item.id).join(","));
   },
   methods: {
     // 勾选商品项-更改仓库vuex中的对应的商品选项取反
@@ -147,6 +151,19 @@ export default {
       if (this.selCount === 0) return; //虽然但是前面已经加了类名disabled判断了。。selCount===0点击不了的
       await this.$store.dispatch("cart/vuexDelSelect");
       this.isEdit = false;
+    },
+    goPay() {
+      // 先判断有没有选中的商品
+      if (this.selCount > 0) {
+        // 有勾选的selCount（结算位置的商品量），才能结算跳转
+        this.$router.push({
+          path: "/pay",
+          query: {
+            mode: "cart",
+            cartIds: this.selCartList.map((item) => item.id).join(","), //cartId 格式是‘cardId，cardId，cardId’
+          },
+        });
+      }
     },
   },
   watch: {

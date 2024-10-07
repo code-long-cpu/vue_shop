@@ -156,7 +156,7 @@ export default {
       default_avater, //用户头像
       showPannel: false, //购物车弹层面板默认值，关闭
       mode: "cart", //购物车状态
-      addCount: 5, //购买数量的数字框绑定的数据
+      addCount: 1, //购买数量的数字框绑定的数据
       cartTotal: 0, //购物车数量
     };
   },

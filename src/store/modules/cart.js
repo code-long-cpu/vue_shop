@@ -78,7 +78,7 @@ export default {
     selCartList(state) {
       return state.cartList.filter(item => item.isChecked)
     },
-    // 求勾选的商品数量
+    // 求勾选的商品总数量
     selCount(state, getters) {
       return getters.selCartList.reduce((sum, item) => sum + item.goods_num, 0)
     },
